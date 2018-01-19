@@ -3,4 +3,21 @@
     <string name="title_friends">Friends</string>
     <string name="title_groups">Groups</string>
     <string name="title_debts">Debts</string>
+
+
+    <string name="new_member">New Friend</string>
+
+    <string name="group_form_name">Group Form</string>
+    <string name="ib_desc_group_type">Group Type</string>
+    <string name="title_save_group">Save</string>
+    <string name="label_group_name">Group Name</string>
+    <string name="hint_group_name">Paris Trip, Christmas 2017, &#8230;</string>
+    <string name="title_group_type_modal">Choose a type</string>
+    <string name="label_group_members">Group Members</string>
+    <string name="add_friend">Add Friend to Group</string>
+    <string name="choose_friend">Who do you wish to add?</string>
+
+    <string name="title_activity_splash_screen">LePigeonRebelle!</string>
+    <string name="dummy_button">Let\'s Start!</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
