@@ -5,32 +5,72 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageButton
+        android:id="@+id/button_remove_member"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:contentDescription="@string/content_desc_remove_member"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_heroicons_x" />
+
     <ImageView
         android:id="@+id/avatar_member"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="Member Avatar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/content_desc_member_avatar"
+        app:layout_constraintBottom_toBottomOf="@+id/button_remove_member"
+        app:layout_constraintStart_toEndOf="@+id/button_remove_member"
+        app:layout_constraintTop_toTopOf="@+id/button_remove_member"
         app:srcCompat="@drawable/ic_heroicons_emotion_happy" />
 
     <TextView
         android:id="@+id/member_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:gravity="center_vertical"
-        android:text="Name"
+        android:text="@string/text_member_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintBottom_toBottomOf="@+id/avatar_member"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintEnd_toStartOf="@+id/button_currency_budget"
         app:layout_constraintStart_toEndOf="@+id/avatar_member"
         app:layout_constraintTop_toTopOf="@+id/avatar_member" />
+
+    <ImageButton
+        android:id="@+id/button_currency_budget"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/ib_desc_group_type"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/member_name"
+        app:layout_constraintEnd_toStartOf="@+id/edit_budget"
+        app:layout_constraintTop_toTopOf="@+id/member_name"
+        app:srcCompat="@drawable/ic_euro_currency_symbol" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edit_budget"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/hint_budget"
+        android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelText="Budget" />
 
 </android.support.constraint.ConstraintLayout>

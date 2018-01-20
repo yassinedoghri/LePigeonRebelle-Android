@@ -2,7 +2,7 @@ package com.lepigeonrebelle;
 
 import android.app.Application;
 
-import com.lepigeonrebelle.model.User;
+import com.lepigeonrebelle.models.User;
 
 public class MyApplication extends Application {
 

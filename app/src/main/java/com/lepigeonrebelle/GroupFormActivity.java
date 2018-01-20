@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,13 +15,15 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
 import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.lepigeonrebelle.model.Group;
-import com.lepigeonrebelle.model.GroupType;
-import com.lepigeonrebelle.model.User;
+import com.lepigeonrebelle.models.Group;
+import com.lepigeonrebelle.models.GroupType;
+import com.lepigeonrebelle.models.User;
+import com.lepigeonrebelle.models.UserGroup;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
@@ -31,15 +35,20 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
 
     private List<GroupType> groupTypes;
     private GroupType groupType;
-    private List<User> groupMembers = new ArrayList<>();
+    private List<UserGroup> groupMembers = new ArrayList<>();
     private List<User> users;
     private Validator validator;
+
+    private MembersAdapter memberAdapter;
 
     @NotEmpty
     private EditText groupNameEdit;
 
     private ListView groupMembersLv;
     private ImageButton groupTypeBtn;
+
+    private MaterialDialog addMemberModal;
+    private MaterialSimpleListAdapter simpleMembersAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,22 +78,23 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
 
         // Populate GroupTypes
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
-        databaseAccess.open();
-        this.groupTypes = databaseAccess.getGroupTypes();
-        this.users = databaseAccess.getUsers();
-        databaseAccess.close();
+        groupTypes = databaseAccess.getGroupTypes();
+        users = databaseAccess.getUsers();
 
-        // set default group type
-        this.groupType = Helper.getGroupTypeById(this.groupTypes, 5);
-        groupTypeBtn.setImageResource(Helper.getDrawableId(this.getBaseContext(), this.groupType.getIcon()));
+        // set default group type + icon
+        groupType = Helper.getGroupTypeById(this.groupTypes, 5);
+        groupTypeBtn.setImageResource(Helper.getDrawableId(this, groupType.getIcon()));
 
         // add default user by default in groupMembers
-        this.groupMembers.add(((MyApplication) this.getApplication()).getDefaultUser());
+        UserGroup defaultUserGroup = new UserGroup();
+        defaultUserGroup.setUser(((MyApplication) this.getApplication()).getDefaultUser());
+        defaultUserGroup.setBudget(0.0);
+        groupMembers.add(defaultUserGroup);
 
-        MembersAdapter adapter = new MembersAdapter(this, this.groupMembers);
+        memberAdapter = new MembersAdapter(this, groupMembers);
 
         groupMembersLv = (ListView) findViewById(R.id.group_members_list);
-        groupMembersLv.setAdapter(adapter);
+        groupMembersLv.setAdapter(memberAdapter);
     }
 
     @Override
@@ -106,7 +116,6 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
 
     @Override
     public void onValidationSucceeded() {
-        Toast.makeText(this, "Yay! we got it right!", Toast.LENGTH_SHORT).show();
         saveGroup();
     }
 
@@ -155,58 +164,128 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
     }
 
     public void showAddMemberModal() {
-        final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(new MaterialSimpleListAdapter.Callback() {
+        simpleMembersAdapter = new MaterialSimpleListAdapter(new MaterialSimpleListAdapter.Callback() {
             @Override
             public void onMaterialListItemSelected(MaterialDialog dialog, int index, MaterialSimpleListItem item) {
                 if (item.getId() == -1) {
                     // Add new friend
                     // add form to list requesting friend's name
+                    new MaterialDialog.Builder(dialog.getContext())
+                            .title(R.string.title_new_user_modal)
+                            .content(R.string.content_new_user_modal)
+                            .inputType(InputType.TYPE_CLASS_TEXT)
+                            .input(R.string.hint_input_new_user, 0, new MaterialDialog.InputCallback() {
+                                @Override
+                                public void onInput(MaterialDialog dialog, CharSequence input) {
+
+                                }
+                            })
+                            .positiveText(R.string.positive_new_user_modal)
+                            .negativeText(R.string.negative_new_user_modal)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog dialog, DialogAction which) {
+                                    // Check if input is not empty
+                                    String friendName = dialog.getInputEditText().getText().toString();
+
+                                    // create user
+                                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+                                    User newFriend = databaseAccess.newUser(friendName);
+
+                                    // add the friend to users
+                                    TextDrawable drawable = TextDrawable.builder()
+                                            .buildRound(String.valueOf(newFriend.getName().charAt(0)).toUpperCase(), Color.RED);
+                                    simpleMembersAdapter.add(new MaterialSimpleListItem.Builder(dialog.getContext())
+                                            .id(newFriend.getId())
+                                            .content(newFriend.getName())
+                                            .icon(drawable)
+                                            .backgroundColor(Color.WHITE)
+                                            .build());
+                                    simpleMembersAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .show();
                 } else {
-                    // add friend to list
+                    // Check if friend is not already in membersList
+                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+                    User selectedFriend = databaseAccess.getUserById((int) item.getId());
+                    if (!Helper.isFriendInMembers(groupMembers, selectedFriend)) {
+                        // add friend to members
+                        UserGroup member = new UserGroup();
+                        member.setUser(selectedFriend);
+                        groupMembers.add(member);
+
+                        memberAdapter.notifyDataSetChanged();
+                    } else {
+                        // show toast: Already a member!
+                        String message = "Already a member!";
+                        Toast.makeText(dialog.getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
 
-        for (User user : this.users) {
-            // generate textDrawable
-            TextDrawable drawable = TextDrawable.builder()
-                    .buildRound(String.valueOf(user.getName().charAt(0)).toUpperCase(), Color.RED);
-            adapter.add(new MaterialSimpleListItem.Builder(this)
-                    .content(user.getName())
-                    .icon(drawable)
-                    .backgroundColor(Color.WHITE)
-                    .build());
-        }
-
-        adapter.add(new MaterialSimpleListItem.Builder(this)
+        simpleMembersAdapter.add(new MaterialSimpleListItem.Builder(this)
                 .id(-1)
                 .content(R.string.new_member)
                 .icon(R.drawable.ic_heroicons_plus_circle)
                 .iconPaddingDp(8)
                 .build());
 
-        new MaterialDialog.Builder(this)
+        for (User user : this.users) {
+            // generate textDrawable
+            TextDrawable drawable = TextDrawable.builder()
+                    .buildRound(String.valueOf(user.getName().charAt(0)).toUpperCase(), Color.RED);
+            simpleMembersAdapter.add(new MaterialSimpleListItem.Builder(this)
+                    .id(user.getId())
+                    .content(user.getName())
+                    .icon(drawable)
+                    .backgroundColor(Color.WHITE)
+                    .build());
+        }
+
+        addMemberModal = new MaterialDialog.Builder(this)
                 .title(R.string.choose_friend)
-                .adapter(adapter, null)
+                .adapter(simpleMembersAdapter, null)
                 .show();
     }
 
-    public void saveGroup() {
+    public Boolean saveGroup() {
         // build Group Object
         String groupName = groupNameEdit.getText().toString();
-        Group group = new Group(-1, groupName, groupType, groupMembers);
+
+        // set all budgets of the EditText-Fields
+        View v;
+        EditText et;
+        for (int i = 0; i < groupMembersLv.getCount(); i++) {
+            v = groupMembersLv.getChildAt(i);
+            et = (EditText) v.findViewById(R.id.edit_budget);
+            String budgetStr = et.getText().toString();
+            if (TextUtils.isEmpty(budgetStr)) {
+                // budget is required, stop method
+                Toast.makeText(this, "You must set a budget for each member!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            groupMembers.get(i).setBudget(Double.parseDouble(budgetStr));
+        }
+
+        Group group = new Group();
+        group.setName(groupName);
+        group.setType(groupType);
+        group.setGroupMembers(groupMembers);
 
         // save to database
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
-        databaseAccess.open();
-        long newGroupId = databaseAccess.createGroup(group);
-        databaseAccess.close();
+        Group newGroup = databaseAccess.createGroup(group);
+
+        Toast.makeText(this, "Yay! we got it right!", Toast.LENGTH_SHORT).show();
 
         // redirect to group activity if success
-        if (newGroupId != -1) {
+        if (newGroup != null) {
             Intent intent = new Intent(GroupFormActivity.this, MainActivity.class);
             startActivity(intent);
             finish(); // destroy Activity
         }
+        return true;
     }
 }

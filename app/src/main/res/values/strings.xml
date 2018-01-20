@@ -20,4 +20,18 @@
     <string name="title_activity_splash_screen">LePigeonRebelle!</string>
     <string name="dummy_button">Let\'s Start!</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hint_budget">0.00</string>
+    <string name="text_member_name">John Doe</string>
+    <string name="content_desc_member_avatar">Member Avatar</string>
+    <string name="content_desc_remove_member">Remove Member</string>
+    <string name="title_fragment_groups">My Groups</string>
+    <string name="title_fragment_friends">My Friends</string>
+    <string name="title_fragment_debts">My Debts</string>
+
+    <string name="title_new_user_modal">New Friend</string>
+    <string name="content_new_user_modal">Add a new friend!</string>
+    <string name="hint_input_new_user">Friend\'s name</string>
+    <string name="positive_new_user_modal">Save</string>
+    <string name="negative_new_user_modal">Cancel</string>
+
 </resources>

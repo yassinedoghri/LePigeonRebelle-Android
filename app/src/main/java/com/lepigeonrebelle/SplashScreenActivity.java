@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.lepigeonrebelle.models.User;
+
 public class SplashScreenActivity extends AppCompatActivity {
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -98,10 +100,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(defaultUserEdit.getText().toString())) {
                     // create new user
                     DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getBaseContext());
-                    databaseAccess.open();
-                    long newUserId = databaseAccess.addUser(defaultUserEdit.getText().toString());
-                    databaseAccess.setDefaultUser((int) newUserId, -1);
-                    databaseAccess.close();
+                    User newUser = databaseAccess.newUser(defaultUserEdit.getText().toString());
+                    databaseAccess.setDefaultUser(newUser);
 
                     // redirect to splash screen
                     Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);

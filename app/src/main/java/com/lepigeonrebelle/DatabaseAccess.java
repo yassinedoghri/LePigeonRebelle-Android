@@ -1,25 +1,34 @@
 package com.lepigeonrebelle;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.lepigeonrebelle.model.ExpenseCategory;
-import com.lepigeonrebelle.model.ExpenseType;
-import com.lepigeonrebelle.model.Group;
-import com.lepigeonrebelle.model.GroupType;
-import com.lepigeonrebelle.model.User;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+import com.lepigeonrebelle.models.Debt;
+import com.lepigeonrebelle.models.ExpenseCategory;
+import com.lepigeonrebelle.models.ExpenseType;
+import com.lepigeonrebelle.models.Group;
+import com.lepigeonrebelle.models.GroupType;
+import com.lepigeonrebelle.models.User;
+import com.lepigeonrebelle.models.UserGroup;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseAccess {
-    private SQLiteOpenHelper openHelper;
-    private SQLiteDatabase database;
+    private DatabaseHelper helper;
     private static DatabaseAccess instance;
+
+    Dao<Debt, Integer> debtDao = null;
+    Dao<ExpenseType, Integer> expenseDao = null;
+    Dao<ExpenseCategory, Integer> expenseCategoryDao = null;
+    Dao<ExpenseType, Integer> expenseTypeDao = null;
+    Dao<Group, Integer> groupDao = null;
+    Dao<GroupType, Integer> groupTypeDao = null;
+    Dao<User, Integer> userDao = null;
+    Dao<UserGroup, Integer> userGroupDao = null;
 
     /**
      * Private constructor to avoid object creation from outside classes.
@@ -27,7 +36,7 @@ public class DatabaseAccess {
      * @param context
      */
     private DatabaseAccess(Context context) {
-        this.openHelper = new DatabaseOpenHelper(context);
+        this.helper = new DatabaseHelper(context);
     }
 
     /**
@@ -44,18 +53,11 @@ public class DatabaseAccess {
     }
 
     /**
-     * Open the database connection.
-     */
-    public void open() {
-        this.database = openHelper.getWritableDatabase();
-    }
-
-    /**
      * Close the database connection.
      */
     public void close() {
-        if (database != null) {
-            this.database.close();
+        if (instance != null) {
+            this.helper.close();
         }
     }
 
@@ -66,16 +68,12 @@ public class DatabaseAccess {
      */
     public List<ExpenseType> getExpenseTypes() {
         List<ExpenseType> list = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM ExpenseType", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            int id = cursor.getInt(0);
-            String wording = cursor.getString(1);
-
-            list.add(new ExpenseType(id, wording));
-            cursor.moveToNext();
+        try {
+            expenseTypeDao = this.helper.getExpenseTypeDao();
+            list = expenseTypeDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
         return list;
     }
 
@@ -86,17 +84,12 @@ public class DatabaseAccess {
      */
     public List<ExpenseCategory> getExpenseCategories() {
         List<ExpenseCategory> list = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM ExpenseCategory", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            int id = cursor.getInt(0);
-            String wording = cursor.getString(1);
-            String icon = cursor.getString(2);
-
-            list.add(new ExpenseCategory(id, wording, icon));
-            cursor.moveToNext();
+        try {
+            expenseCategoryDao = helper.getExpenseCategoryDao();
+            list = expenseCategoryDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
         return list;
     }
 
@@ -107,17 +100,12 @@ public class DatabaseAccess {
      */
     public List<GroupType> getGroupTypes() {
         List<GroupType> list = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM GroupType", null);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            int id = cursor.getInt(0);
-            String wording = cursor.getString(1);
-            String icon = cursor.getString(2);
-
-            list.add(new GroupType(id, wording, icon));
-            cursor.moveToNext();
+        try {
+            groupTypeDao = helper.getGroupTypeDao();
+            list = groupTypeDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
         return list;
     }
 
@@ -127,90 +115,114 @@ public class DatabaseAccess {
      * @param name user name
      * @return id of generated row
      */
-    public long addUser(String name) {
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        return database.insert("User", null, values);
+    public User newUser(String name) {
+        try {
+            userDao = helper.getUserDao();
+            User user = new User();
+            user.setName(name);
+            userDao.create(user);
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void dropUser(int idUser) {
-        String deleteQuery = "DELETE FROM User where idUser='" + idUser + "'";
-        Log.d("query", deleteQuery);
-        database.execSQL(deleteQuery);
-    }
-
+    /**
+     * Reads all Users from the database.
+     *
+     * @return List<User>
+     */
     public List<User> getUsers() {
         List<User> list = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM User", null);
-
-        int idDefaultUser = getDefaultUser().getId();
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            int id = cursor.getInt(0);
-            String name = cursor.getString(1);
-
-            list.add(new User(id, name, idDefaultUser == id));
-            cursor.moveToNext();
+        try {
+            userDao = helper.getUserDao();
+            list = userDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
         return list;
     }
 
-    public long setDefaultUser(int newUserId, int currentUserId) {
-        if (currentUserId == -1) {
-            User oldUser = getDefaultUser();
-            if (oldUser.getId() == -1) {
-                // no user has been set as default yet. Insert.
-                ContentValues values = new ContentValues();
-                values.put("idDefaultUser", newUserId);
-                return database.insert("DefaultUser", null, values);
-            } else {
-                currentUserId = oldUser.getId();
+    public void setDefaultUser(User newDefaultUser) {
+        try {
+            userDao = helper.getUserDao();
+            List<User> users = getUsers();
+            newDefaultUser.setDefaultUser(1);
+            userDao.update(newDefaultUser);
+            for (User user : users) {
+                if (user.isDefaultUser() == 1) {
+                    userDao.update(user);
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        ContentValues cv = new ContentValues();
-        cv.put("idDefaultUser", newUserId);
-        return database.update("DefaultUser", cv, "idDefaultUser=" + currentUserId, null);
     }
 
     public User getDefaultUser() {
-        int idDefaultUser = -1;
-        Cursor cursor = database.rawQuery("SELECT idDefaultUser FROM DefaultUser", null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            idDefaultUser = cursor.getInt(cursor.getColumnIndex("idDefaultUser"));
-            Cursor cursor2 = database.rawQuery("SELECT * FROM User WHERE idUser=" + idDefaultUser, null);
-            if (cursor2.getCount() > 0) {
-                cursor2.moveToFirst();
-                User defaultUser = new User(cursor2.getInt(0), cursor2.getString(1), true);
-                cursor.close();
-                cursor2.close();
-                return defaultUser;
-            }
+        try {
+            userDao = helper.getUserDao();
+            QueryBuilder<User, Integer> queryBuilder = userDao.queryBuilder();
+            Where<User, Integer> where = queryBuilder.where();
+            where.eq(User.FIELD_NAME_IS_DEFAULT_USER, 1);
+            return userDao.queryForFirst(queryBuilder.prepare());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
-        return new User(-1, "LePigeonRebelle", true);
+        return null;
     }
 
-    public long createGroup(Group group) {
-        ContentValues values = new ContentValues();
-        values.put("name", group.getName());
-        values.put("idType", group.getGroupType().getId());
-        long newGroupId = database.insert("\"Group\"", null, values);
-
-        if (newGroupId != -1) {
-            // if group has been inserted successfully, add members
-            for (User user : group.getGroupMembers()) {
-                ContentValues valuesGM = new ContentValues();
-                valuesGM.put("idUser", user.getId());
-                valuesGM.put("idGroup", newGroupId);
-                valuesGM.put("budget", 100);
-                database.insert("User_Group", null, valuesGM);
-            }
+    public User getUserById(int id) {
+        try {
+            userDao = helper.getUserDao();
+            return userDao.queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
 
-        return newGroupId;
+    public Group createGroup(Group group) {
+        try {
+            groupDao = helper.getGroupDao();
+            groupDao.create(group);
+
+            userGroupDao = helper.getUserGroupDao();
+            int index = 0;
+            for (UserGroup member : group.getGroupMembers()) {
+                member.setGroup(group);
+                userGroupDao.create(member);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return group;
+    }
+
+    public List<Group> getGroups() {
+        List<Group> list = new ArrayList<>();
+        try {
+            groupDao = helper.getGroupDao();
+            list = groupDao.queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<UserGroup> getGroupMembers(Group group) {
+        List<UserGroup> list = new ArrayList<>();
+        try {
+            userGroupDao = helper.getUserGroupDao();
+            list = userGroupDao.queryBuilder()
+                    .where()
+                    .eq(UserGroup.FIELD_NAME_GROUP_ID, group.getId())
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }
