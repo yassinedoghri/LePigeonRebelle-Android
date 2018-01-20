@@ -144,6 +144,25 @@ public class DatabaseAccess {
         return list;
     }
 
+    /**
+     * Reads all Users from the database.
+     *
+     * @return List<User>
+     */
+    public List<User> getFriends() {
+        List<User> list = new ArrayList<>();
+        try {
+            userDao = helper.getUserDao();
+            list = userDao.queryBuilder()
+                    .where()
+                    .eq(User.FIELD_NAME_IS_DEFAULT_USER, 0)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public void setDefaultUser(User newDefaultUser) {
         try {
             userDao = helper.getUserDao();

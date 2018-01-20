@@ -193,8 +193,9 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
                                     User newFriend = databaseAccess.newUser(friendName);
 
                                     // add the friend to users
+                                    int color = dialog.getContext().getColor(R.color.colorAccent);
                                     TextDrawable drawable = TextDrawable.builder()
-                                            .buildRound(String.valueOf(newFriend.getName().charAt(0)).toUpperCase(), Color.RED);
+                                            .buildRound(String.valueOf(newFriend.getName().charAt(0)).toUpperCase(), color);
                                     simpleMembersAdapter.add(new MaterialSimpleListItem.Builder(dialog.getContext())
                                             .id(newFriend.getId())
                                             .content(newFriend.getName())
@@ -234,8 +235,9 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
 
         for (User user : this.users) {
             // generate textDrawable
+            int color = this.getColor(R.color.colorAccent);
             TextDrawable drawable = TextDrawable.builder()
-                    .buildRound(String.valueOf(user.getName().charAt(0)).toUpperCase(), Color.RED);
+                    .buildRound(String.valueOf(user.getName().charAt(0)).toUpperCase(), color);
             simpleMembersAdapter.add(new MaterialSimpleListItem.Builder(this)
                     .id(user.getId())
                     .content(user.getName())
