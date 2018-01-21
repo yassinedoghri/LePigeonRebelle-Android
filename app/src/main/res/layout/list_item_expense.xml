@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image_expense_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_heroicons_tag" />
+
+    <TextView
+        android:id="@+id/text_expense_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Expense Description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toBottomOf="@+id/image_expense_icon"
+        app:layout_constraintEnd_toStartOf="@+id/text_owing_label"
+        app:layout_constraintStart_toEndOf="@+id/image_expense_icon"
+        app:layout_constraintTop_toTopOf="@+id/image_expense_icon" />
+
+    <TextView
+        android:id="@+id/text_exprense_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Who payed"
+        app:layout_constraintEnd_toEndOf="@+id/text_expense_desc"
+        app:layout_constraintStart_toStartOf="@+id/text_expense_desc"
+        app:layout_constraintTop_toBottomOf="@+id/text_expense_desc" />
+
+    <TextView
+        android:id="@+id/text_owing_label"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Owing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_owing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="100€"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="@+id/text_owing_label"
+        app:layout_constraintStart_toStartOf="@+id/text_owing_label"
+        app:layout_constraintTop_toBottomOf="@+id/text_owing_label" />
+</android.support.constraint.ConstraintLayout>

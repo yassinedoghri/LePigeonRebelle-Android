@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Helper {
 
+
     public static Boolean isFriendInMembers(List<UserGroup> members, User friend) {
         for (UserGroup member : members) {
             if (member.getUser().getId() == friend.getId()) {

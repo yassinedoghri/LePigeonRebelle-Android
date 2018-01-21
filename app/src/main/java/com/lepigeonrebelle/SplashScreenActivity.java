@@ -19,7 +19,7 @@ import com.lepigeonrebelle.models.User;
 public class SplashScreenActivity extends AppCompatActivity {
     /**
      * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
+     * and a change of the status and navigation_group bar.
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
@@ -28,7 +28,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
+            // Delayed removal of status and navigation_group bar
 
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
@@ -131,7 +131,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
+        // Schedule a runnable to remove the status and navigation_group bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }

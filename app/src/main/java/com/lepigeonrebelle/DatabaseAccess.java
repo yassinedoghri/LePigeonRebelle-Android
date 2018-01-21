@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.lepigeonrebelle.models.Debt;
+import com.lepigeonrebelle.models.Expense;
 import com.lepigeonrebelle.models.ExpenseCategory;
 import com.lepigeonrebelle.models.ExpenseType;
 import com.lepigeonrebelle.models.Group;
@@ -22,7 +23,7 @@ public class DatabaseAccess {
     private static DatabaseAccess instance;
 
     Dao<Debt, Integer> debtDao = null;
-    Dao<ExpenseType, Integer> expenseDao = null;
+    Dao<Expense, Integer> expenseDao = null;
     Dao<ExpenseCategory, Integer> expenseCategoryDao = null;
     Dao<ExpenseType, Integer> expenseTypeDao = null;
     Dao<Group, Integer> groupDao = null;
@@ -230,6 +231,16 @@ public class DatabaseAccess {
         return list;
     }
 
+    public Group getGroupById(Integer id) {
+        try {
+            groupDao = helper.getGroupDao();
+            return groupDao.queryForId(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<UserGroup> getGroupMembers(Group group) {
         List<UserGroup> list = new ArrayList<>();
         try {
@@ -237,6 +248,20 @@ public class DatabaseAccess {
             list = userGroupDao.queryBuilder()
                     .where()
                     .eq(UserGroup.FIELD_NAME_GROUP_ID, group.getId())
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Expense> getGroupExpenses(Group group) {
+        List<Expense> list = new ArrayList<>();
+        try {
+            expenseDao = helper.getExpenseDao();
+            list = expenseDao.queryBuilder()
+                    .where()
+                    .eq(Expense.FIELD_NAME_GROUP, group.getId())
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();

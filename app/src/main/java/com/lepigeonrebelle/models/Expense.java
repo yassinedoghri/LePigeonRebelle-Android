@@ -23,7 +23,7 @@ public class Expense {
     private int id;
 
     @DatabaseField(columnName = FIELD_NAME_DESCRIPTION)
-    private String name;
+    private String description;
 
     @DatabaseField(columnName = FIELD_NAME_DATE)
     private Date date;
@@ -43,4 +43,59 @@ public class Expense {
     public Expense() {
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public ExpenseCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ExpenseCategory category) {
+        this.category = category;
+    }
+
+    public ExpenseType getType() {
+        return type;
+    }
+
+    public void setType(ExpenseType type) {
+        this.type = type;
+    }
 }

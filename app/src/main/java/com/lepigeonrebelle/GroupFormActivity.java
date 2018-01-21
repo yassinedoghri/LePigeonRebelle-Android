@@ -284,7 +284,8 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
 
         // redirect to group activity if success
         if (newGroup != null) {
-            Intent intent = new Intent(GroupFormActivity.this, MainActivity.class);
+            Intent intent = new Intent(GroupFormActivity.this, GroupActivity.class);
+            intent.putExtra("groupId", newGroup.getId());
             startActivity(intent);
             finish(); // destroy Activity
         }

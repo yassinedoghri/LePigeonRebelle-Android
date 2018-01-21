@@ -1,20 +1,24 @@
 package com.lepigeonrebelle;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.lepigeonrebelle.models.Group;
 
-public class MainActivity extends AppCompatActivity {
+public class GroupActivity extends AppCompatActivity {
 
     BottomNavigationView navigation;
+
+    private Group currentGroup;
     private FloatingActionButton newGroupBtn;
     private FloatingActionButton newExpenseBtn;
 
@@ -24,14 +28,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_friends:
-                    switchToFragment(new FriendsFragment());
+                case R.id.navigation_group_expenses:
+                    switchToFragment(new GroupExpensesFragment());
                     return true;
-                case R.id.navigation_groups:
-                    switchToFragment(new GroupsFragment());
-                    return true;
-                case R.id.navigation_debts:
-                    switchToFragment(new DebtsFragment());
+                case R.id.navigation_group_debts:
+                    switchToFragment(new GroupDebtsFragment());
                     return true;
             }
             return false;
@@ -41,26 +42,36 @@ public class MainActivity extends AppCompatActivity {
     public void switchToFragment(Fragment fragment) {
         FragmentManager manager = getFragmentManager();
         manager.beginTransaction()
-                .replace(R.id.fragment_main, fragment)
+                .replace(R.id.fragment_group, fragment)
                 .commit();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Check if default user is set
-        initDefaultUser();
+        setContentView(R.layout.activity_group);
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
+
+        // set currentGroup globally
+        ((MyApplication) this.getApplication()).setCurrentGroup(databaseAccess.getGroupById(getIntent().getIntExtra("groupId", -1)));
+
+        // check if currentGroup is not null
+        currentGroup = ((MyApplication) this.getApplication()).getCurrentGroup();
+        if (currentGroup != null) {
+            setTitle(currentGroup.getName());
+        } else {
+            finish();
+        }
 
         newGroupBtn = (FloatingActionButton) findViewById(R.id.button_new_group);
         newGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GroupFormActivity.class);
+                Intent intent = new Intent(GroupActivity.this, GroupFormActivity.class);
                 startActivity(intent);
             }
         });
@@ -72,21 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 // start expense form activity
             }
         });
-    }
-
-    private void initDefaultUser() {
-        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
-
-        // set defaultUser
-        ((MyApplication) this.getApplication()).setDefaultUser(databaseAccess.getDefaultUser());
-
-        if (((MyApplication) this.getApplication()).getDefaultUser() == null) {
-            // redirect to splash screen
-            Intent intent = new Intent(MainActivity.this, SplashScreenActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        // default user has already been set,  continue.
     }
 
 }

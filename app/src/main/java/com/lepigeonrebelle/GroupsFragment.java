@@ -1,11 +1,12 @@
 package com.lepigeonrebelle;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 
@@ -21,10 +22,22 @@ public class GroupsFragment extends Fragment {
 
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity());
 
-        GroupsAdapter adapter = new GroupsAdapter(getActivity(), databaseAccess.getGroups());
+        final GroupsAdapter adapter = new GroupsAdapter(getActivity(), databaseAccess.getGroups());
 
         groupList = rootView.findViewById(R.id.list_groups);
         groupList.setAdapter(adapter);
+
+        groupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                int groupId = adapter.getItem(position).getId();
+                Intent i = new Intent(getActivity(), GroupActivity.class);
+                i.putExtra("groupId", groupId);
+                startActivity(i);
+            }
+        });
 
         return rootView;
     }
