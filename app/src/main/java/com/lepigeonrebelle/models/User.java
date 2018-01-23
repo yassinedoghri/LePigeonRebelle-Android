@@ -1,7 +1,10 @@
 package com.lepigeonrebelle.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.List;
 
 @DatabaseTable(tableName = User.TABLE_NAME_USER)
 public class User {
@@ -20,6 +23,8 @@ public class User {
 
     @DatabaseField(columnName = FIELD_NAME_IS_DEFAULT_USER)
     private int isDefaultUser;
+
+    private List<UserGroup> userGroups;
 
     public User() {
     }
@@ -44,7 +49,23 @@ public class User {
         return isDefaultUser;
     }
 
-    public void setDefaultUser(int defaultUser) {
-        isDefaultUser = defaultUser;
+    public void setDefaultUser(int isDefaultUser) {
+        this.isDefaultUser = isDefaultUser;
+    }
+
+    public List<UserGroup> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(List<UserGroup> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+    @Override
+    public String toString() {
+        if (isDefaultUser() == 1) {
+            return "Me";
+        }
+        return name;
     }
 }

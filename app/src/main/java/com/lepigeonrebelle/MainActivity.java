@@ -64,14 +64,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        newExpenseBtn = (FloatingActionButton) findViewById(R.id.button_new_expense);
-        newExpenseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // start expense form activity
-            }
-        });
     }
 
     private void initDefaultUser() {

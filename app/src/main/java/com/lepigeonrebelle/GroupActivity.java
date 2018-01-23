@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,20 @@ public class GroupActivity extends AppCompatActivity {
     private Group currentGroup;
     private FloatingActionButton newGroupBtn;
     private FloatingActionButton newExpenseBtn;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // set currentGroup and its members to null
+                ((MyApplication) this.getApplication()).setCurrentGroup(null);
+                ((MyApplication) this.getApplication()).setCurrentGroupUsers(null);
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -63,6 +78,7 @@ public class GroupActivity extends AppCompatActivity {
         currentGroup = ((MyApplication) this.getApplication()).getCurrentGroup();
         if (currentGroup != null) {
             setTitle(currentGroup.getName());
+            ((MyApplication) this.getApplication()).setCurrentGroupUsers(databaseAccess.getGroupUsers(currentGroup));
         } else {
             finish();
         }
@@ -80,7 +96,9 @@ public class GroupActivity extends AppCompatActivity {
         newExpenseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // start expense form activity
+                // show expense form activity
+                Intent intent = new Intent(GroupActivity.this, ExpenseFormActivity.class);
+                startActivity(intent);
             }
         });
     }

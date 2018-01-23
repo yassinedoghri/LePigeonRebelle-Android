@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
+import java.util.List;
 
 @DatabaseTable(tableName = Expense.TABLE_NAME_EXPENSE)
 public class Expense {
@@ -14,6 +15,7 @@ public class Expense {
     public static final String FIELD_NAME_DESCRIPTION = "description";
     public static final String FIELD_NAME_DATE = "date";
     public static final String FIELD_NAME_COMMENT = "comment";
+    public static final String FIELD_NAME_IS_TODO = "isTodo";
 
     public static final String FIELD_NAME_GROUP = "idGroup";
     public static final String FIELD_NAME_CATEGORY = "idCategory";
@@ -31,6 +33,9 @@ public class Expense {
     @DatabaseField(columnName = FIELD_NAME_COMMENT)
     private String comment;
 
+    @DatabaseField(columnName = FIELD_NAME_IS_TODO)
+    private int isTodo;
+
     @DatabaseField(columnName = FIELD_NAME_GROUP, foreign = true, foreignAutoRefresh = true)
     private Group group;
 
@@ -39,6 +44,8 @@ public class Expense {
 
     @DatabaseField(columnName = FIELD_NAME_TYPE, foreign = true, foreignAutoRefresh = true)
     private ExpenseType type;
+
+    private List<Debt> debts;
 
     public Expense() {
     }
@@ -75,6 +82,14 @@ public class Expense {
         this.comment = comment;
     }
 
+    public int isTodo() {
+        return isTodo;
+    }
+
+    public void setTodo(int isTodo) {
+        this.isTodo = isTodo;
+    }
+
     public Group getGroup() {
         return group;
     }
@@ -97,5 +112,13 @@ public class Expense {
 
     public void setType(ExpenseType type) {
         this.type = type;
+    }
+
+    public List<Debt> getDebts() {
+        return debts;
+    }
+
+    public void setDebts(List<Debt> debts) {
+        this.debts = debts;
     }
 }

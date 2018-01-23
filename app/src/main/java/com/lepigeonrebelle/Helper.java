@@ -2,6 +2,9 @@ package com.lepigeonrebelle;
 
 import android.content.Context;
 
+import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
+import com.lepigeonrebelle.models.Debt;
+import com.lepigeonrebelle.models.ExpenseCategory;
 import com.lepigeonrebelle.models.GroupType;
 import com.lepigeonrebelle.models.User;
 import com.lepigeonrebelle.models.UserGroup;
@@ -20,11 +23,37 @@ public class Helper {
         return false;
     }
 
+    public static Boolean isFriendAlreadyOwing(List<Debt> debts, User friend) {
+        for (Debt debt : debts) {
+            if (debt.getUserOwing().getId() == friend.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean isItemInList(List<Integer> list, MaterialSimpleListItem item) {
+        for (Integer i : list) {
+            if (i == item.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static GroupType getGroupTypeById(List<GroupType> groupTypes, int id) {
         for (GroupType groupType : groupTypes) {
-            // Set default group type
             if (groupType.getId() == id) {
                 return groupType;
+            }
+        }
+        return null;
+    }
+
+    public static ExpenseCategory getExpenseCategoryById(List<ExpenseCategory> expenseCategories, int id) {
+        for (ExpenseCategory expenseCategory : expenseCategories) {
+            if (expenseCategory.getId() == id) {
+                return expenseCategory;
             }
         }
         return null;

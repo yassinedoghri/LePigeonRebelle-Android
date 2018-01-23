@@ -14,7 +14,7 @@
     <string name="hint_group_name">Paris Trip, Christmas 2017, &#8230;</string>
     <string name="title_group_type_modal">Choose a type</string>
     <string name="label_group_members">Group Members</string>
-    <string name="add_friend">Add Friend to Group</string>
+    <string name="add_friend">Add a Friend</string>
     <string name="choose_friend">Who do you wish to add?</string>
 
     <string name="title_activity_splash_screen">LePigeonRebelle!</string>
@@ -40,5 +40,8 @@
     <string name="title_group_expenses">Expenses</string>
     <string name="title_group_debts">Debts</string>
     <string name="title_activity_base">BaseActivity</string>
+
+    <!-- ExpenseCategory modal -->
+    <string name="title_expense_type_modal">Choose a category</string>
 
 </resources>

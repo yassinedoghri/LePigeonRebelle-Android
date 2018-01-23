@@ -50,4 +50,9 @@ public class ExpenseType {
     public void setExpenses(ForeignCollection<Expense> expenses) {
         this.expenses = expenses;
     }
+
+    @Override
+    public String toString() {
+        return wording;
+    }
 }

@@ -40,12 +40,12 @@
         android:text="@string/text_member_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintBottom_toBottomOf="@+id/avatar_member"
-        app:layout_constraintEnd_toStartOf="@+id/button_currency_budget"
+        app:layout_constraintEnd_toStartOf="@+id/button_currency_amount"
         app:layout_constraintStart_toEndOf="@+id/avatar_member"
         app:layout_constraintTop_toTopOf="@+id/avatar_member" />
 
     <ImageButton
-        android:id="@+id/button_currency_budget"
+        android:id="@+id/button_currency_amount"
         android:layout_width="35dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
@@ -53,13 +53,13 @@
         android:padding="10dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/member_name"
-        app:layout_constraintEnd_toStartOf="@+id/edit_budget"
+        app:layout_constraintEnd_toStartOf="@+id/edit_amount"
         app:layout_constraintTop_toTopOf="@+id/member_name"
         app:srcCompat="@drawable/ic_euro_currency_symbol" />
 
     <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/edit_budget"
-        android:layout_width="100dp"
+        android:id="@+id/edit_amount"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
@@ -70,7 +70,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:met_floatingLabel="highlight"
-        app:met_floatingLabelText="Budget" />
+        app:met_floatingLabel="none" />
+
+    <TextView
+        android:id="@+id/text_shares"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Share(s)"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_amount"
+        app:layout_constraintEnd_toStartOf="@+id/edit_amount"
+        app:layout_constraintTop_toTopOf="@+id/edit_amount" />
 
 </android.support.constraint.ConstraintLayout>

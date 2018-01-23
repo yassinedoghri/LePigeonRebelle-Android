@@ -82,7 +82,7 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
         users = databaseAccess.getUsers();
 
         // set default group type + icon
-        groupType = Helper.getGroupTypeById(this.groupTypes, 5);
+        groupType = Helper.getGroupTypeById(groupTypes, 5);
         groupTypeBtn.setImageResource(Helper.getDrawableId(this, groupType.getIcon()));
 
         // add default user by default in groupMembers
@@ -280,10 +280,9 @@ public class GroupFormActivity extends AppCompatActivity implements Validator.Va
         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(this);
         Group newGroup = databaseAccess.createGroup(group);
 
-        Toast.makeText(this, "Yay! we got it right!", Toast.LENGTH_SHORT).show();
-
         // redirect to group activity if success
         if (newGroup != null) {
+            Toast.makeText(this, "Yay! Group created!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(GroupFormActivity.this, GroupActivity.class);
             intent.putExtra("groupId", newGroup.getId());
             startActivity(intent);

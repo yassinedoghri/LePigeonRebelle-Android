@@ -255,6 +255,24 @@ public class DatabaseAccess {
         return list;
     }
 
+    public List<User> getGroupUsers(Group group) {
+        List<User> list = new ArrayList<>();
+        try {
+            userDao = helper.getUserDao();
+            userGroupDao = helper.getUserGroupDao();
+            List<UserGroup> members = userGroupDao.queryBuilder()
+                    .where()
+                    .eq(UserGroup.FIELD_NAME_GROUP_ID, group.getId())
+                    .query();
+            for (UserGroup member : members) {
+                list.add(this.getUserById(member.getUser().getId()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<Expense> getGroupExpenses(Group group) {
         List<Expense> list = new ArrayList<>();
         try {
@@ -262,6 +280,36 @@ public class DatabaseAccess {
             list = expenseDao.queryBuilder()
                     .where()
                     .eq(Expense.FIELD_NAME_GROUP, group.getId())
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Expense createExpense(Expense expense) {
+        try {
+            expenseDao = helper.getExpenseDao();
+            expenseDao.create(expense);
+
+            debtDao = helper.getDebtDao();
+            for (Debt debt : expense.getDebts()) {
+                debt.setExpense(expense);
+                debtDao.create(debt);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return expense;
+    }
+
+    public List<Debt> getExpenseDebts(Expense expense) {
+        List<Debt> list = new ArrayList<>();
+        try {
+            debtDao = helper.getDebtDao();
+            list = debtDao.queryBuilder()
+                    .where()
+                    .eq(Debt.FIELD_NAME_EXPENSE, expense.getId())
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();

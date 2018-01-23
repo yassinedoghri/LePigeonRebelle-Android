@@ -42,17 +42,6 @@
             app:fab_icon="@drawable/ic_heroicons_group"
             app:fab_size="mini"
             app:fab_title="New Group" />
-
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_new_expense"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/white"
-            app:fab_colorPressed="@color/white_pressed"
-            app:fab_icon="@drawable/ic_heroicons_tag"
-            app:fab_size="mini"
-            app:fab_title="New Expense" />
-
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     <android.support.design.widget.BottomNavigationView
