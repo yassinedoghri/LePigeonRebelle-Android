@@ -14,6 +14,8 @@ import com.lepigeonrebelle.models.Group;
 import com.lepigeonrebelle.models.User;
 import com.lepigeonrebelle.models.UserGroup;
 
+import org.w3c.dom.Text;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class ExpensesAdapter extends ArrayAdapter<Expense> {
         TextView info;
         TextView owingLabel;
         TextView amount;
+        TextView todo;
     }
 
     public ExpensesAdapter(Context context, List<Expense> expenses) {
@@ -48,6 +51,7 @@ public class ExpensesAdapter extends ArrayAdapter<Expense> {
             viewHolder.info = (TextView) convertView.findViewById(R.id.text_exprense_info);
             viewHolder.owingLabel = (TextView) convertView.findViewById(R.id.text_owing_label);
             viewHolder.amount = (TextView) convertView.findViewById(R.id.text_owing);
+            viewHolder.todo = (TextView) convertView.findViewById(R.id.text_todo);
             // Cache the viewHolder object inside the fresh view
             convertView.setTag(viewHolder);
         } else {
@@ -99,6 +103,10 @@ public class ExpensesAdapter extends ArrayAdapter<Expense> {
 
         viewHolder.owingLabel.setText(owingText);
         viewHolder.amount.setText(df.format(amount) + "€");
+
+        if (expense.isTodo() == 1) {
+            viewHolder.todo.setVisibility(View.VISIBLE);
+        }
 
         // Return the completed view to render on screen
         return convertView;

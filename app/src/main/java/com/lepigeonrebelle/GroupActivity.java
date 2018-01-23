@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.lepigeonrebelle.models.Debt;
 import com.lepigeonrebelle.models.Group;
+import com.lepigeonrebelle.models.UserGroup;
+
+import java.text.DecimalFormat;
+import java.util.List;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -101,6 +106,25 @@ public class GroupActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        ActionBar actionBar = getSupportActionBar();
+
+        // Show group budget
+        List<UserGroup> groupMembers = databaseAccess.getGroupMembers(currentGroup);
+        double budget = 0.0;
+        for (UserGroup member : groupMembers) {
+            budget += member.getBudget();
+        }
+
+        List<Debt> groupDebts = databaseAccess.getAllGroupDebts(currentGroup);
+        double expenses = 0.0;
+        for (Debt debt : groupDebts) {
+            expenses += debt.getAmount();
+        }
+        double result = budget - expenses;
+
+        DecimalFormat df = new DecimalFormat("##.##");
+        actionBar.setSubtitle("Remaining budget: " + df.format(result) + "€");
     }
 
 }
