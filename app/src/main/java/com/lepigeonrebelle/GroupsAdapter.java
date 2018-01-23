@@ -12,6 +12,7 @@ import com.lepigeonrebelle.models.Group;
 import com.lepigeonrebelle.models.GroupType;
 import com.lepigeonrebelle.models.UserGroup;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class GroupsAdapter extends ArrayAdapter<Group> {
@@ -60,7 +61,9 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         for (UserGroup member : groupMembers) {
             budget += member.getBudget();
         }
-        viewHolder.budget.setText(String.valueOf(budget));
+        DecimalFormat df = new DecimalFormat("##.##");
+
+        viewHolder.budget.setText(df.format(budget) + "€");
 
         // Return the completed view to render on screen
         return convertView;

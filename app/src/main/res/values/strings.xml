@@ -26,7 +26,7 @@
     <string name="content_desc_remove_member">Remove Member</string>
     <string name="title_fragment_groups">My Groups</string>
     <string name="title_fragment_friends">My Friends</string>
-    <string name="title_fragment_debts">My Debts</string>
+    <string name="title_fragment_debts">All Debts</string>
 
     <!-- New User Modal -->
     <string name="title_new_user_modal">New Friend</string>

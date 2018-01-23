@@ -3,6 +3,7 @@ package com.lepigeonrebelle;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.ColumnArg;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.lepigeonrebelle.models.Debt;
@@ -317,4 +318,37 @@ public class DatabaseAccess {
         return list;
     }
 
+    public List<Debt> getGroupDebts(Group group) {
+        List<Debt> debtslist = new ArrayList<>();
+        List<Expense> list = new ArrayList<>();
+        list = getGroupExpenses(group);
+        try {
+            for (Expense expense : list) {
+                debtDao = helper.getDebtDao();
+                QueryBuilder<Debt, Integer> queryBuilder = debtDao.queryBuilder();
+                Where<Debt, Integer> where = queryBuilder.where();
+                where.ne(Debt.FIELD_NAME_ID_USER_OWING, new ColumnArg(Debt.FIELD_NAME_ID_USER_PAYING));
+                where.and();
+                where.eq(Debt.FIELD_NAME_EXPENSE, expense.getId());
+                debtslist.addAll(debtDao.query(queryBuilder.prepare()));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return debtslist;
+    }
+
+    public List<Debt> getDebts() {
+        List<Debt> list = new ArrayList<>();
+        try {
+            debtDao = helper.getDebtDao();
+            QueryBuilder<Debt, Integer> queryBuilder = debtDao.queryBuilder();
+            Where<Debt, Integer> where = queryBuilder.where();
+            where.ne(Debt.FIELD_NAME_ID_USER_OWING, new ColumnArg(Debt.FIELD_NAME_ID_USER_PAYING));
+            return debtDao.query(queryBuilder.prepare());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

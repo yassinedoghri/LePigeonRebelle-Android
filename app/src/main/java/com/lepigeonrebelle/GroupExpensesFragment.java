@@ -13,7 +13,7 @@ import com.lepigeonrebelle.models.Group;
 
 public class GroupExpensesFragment extends Fragment {
 
-    ListView groupList;
+    ListView expensesList;
     Group currentGroup;
 
     @Override
@@ -22,7 +22,6 @@ public class GroupExpensesFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.group_expenses_view, container, false);
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -34,8 +33,8 @@ public class GroupExpensesFragment extends Fragment {
         currentGroup = ((MyApplication) getActivity().getApplication()).getCurrentGroup();
         ExpensesAdapter adapter = new ExpensesAdapter(getActivity(), databaseAccess.getGroupExpenses(currentGroup));
 
-        groupList = getView().findViewById(R.id.list_group_expenses);
-        groupList.setAdapter(adapter);
+        expensesList = getView().findViewById(R.id.list_group_expenses);
+        expensesList.setAdapter(adapter);
 
     }
 }
